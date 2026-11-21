@@ -103,7 +103,14 @@ class Game:
         self.enemies.update()
 
         # TODO(F3): 총알과 적이 부딪히면 둘 다 없애고, 맞힌 적 하나당 SCORE_PER_ENEMY 점을 더할 것.
-        #           힌트: pygame.sprite.groupcollide
+        # 총알과 적의 충돌을 검사하고 충돌한 스프라이트를 제거한다.
+        hits = pygame.sprite.groupcollide(
+            self.bullets, self.enemies, True, True
+        )
+
+        # 맞힌 적의 수만큼 점수를 추가한다.
+        for enemies in hits.values():
+            self.score += len(enemies) * SCORE_PER_ENEMY
 
         # TODO(F4): 적이 플레이어에 닿으면 그 적을 없애고 생명(self.lives)을 1 줄일 것.
         #           힌트: pygame.sprite.spritecollide
@@ -138,7 +145,14 @@ class Game:
             self.screen.blit(self.dark_shade, (0, 0))  # 게임 오버 글자가 잘 보이게
         self.screen.blit(self.hud_shade, (0, 0))  # 점수·생명 글자 뒤 어두운 띠
         self.draw_text(f"LIVES: {self.lives}", self.font, WHITE, topright=(WIDTH - 10, 10))
-        # TODO(F3): 화면 왼쪽 위에 현재 점수를 "SCORE: 120" 형태로 표시할 것.
+        # TODO(F3): 화면 왼쪽 위에 현재 점수를 "SCORE: 120" 형태로 표시할 것.  
+        self.draw_text(
+            f"SCORE: {self.score}",
+            self.font,
+            WHITE,
+            topleft=(10, 10)
+        )
+   
         if self.game_over:
             self.draw_game_over()
         pygame.display.flip()
